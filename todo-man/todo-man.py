@@ -40,6 +40,7 @@ def get_todos(file_list):
   return todo_list
 
 def write_todos(todo_list, output_file):
+  wrote = {}
   gfm_prefix = "- [ ] "
 
   #TODO: Sort todo_list by file and line number
@@ -47,9 +48,12 @@ def write_todos(todo_list, output_file):
     f.write("#TODO List\n")
     
     for todo in todo_list:
-      f.write(gfm_prefix)
-      f.write(todo.text + " ")
-      f.write( "(" + todo.filepath + ":" + todo.line_number + ")\n")
+      key = todo.text + todo.line_number
+      if not wrote.get(key):
+	f.write(gfm_prefix)
+	f.write(todo.text + " ")
+	f.write( "(" + todo.filepath + ":" + todo.line_number + ")\n")
+	wrote[key] = key
 
 def main():
   parser = argparse.ArgumentParser(description='Process.')

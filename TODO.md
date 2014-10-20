@@ -1,7 +1,7 @@
 #TODO List
-- [ ] put in docstring (./todo-man.py:8)
-- [ ] Use a regular expression instead (./todo-man.py:34)
-- [ ] Sort todo_list by file and line number (./todo-man.py:44)
-- [ ] Make an argument '-f' to force the output file to get overwritten (./todo-man.py:57)
-- [ ] Make an argument for whether the output file is markdown or github-flavored markdown (./todo-man.py:58)
-- [ ] Import logging and use it (./todo-man.py:70)
+- [ ] put in docstring (./build/lib/todo-man/todo-man.py:9)
+- [ ] Use a regular expression instead (./build/lib/todo-man/todo-man.py:35)
+- [ ] Sort todo_list by file and line number (./build/lib/todo-man/todo-man.py:46)
+- [ ] Make an argument '-f' to force the output file to get overwritten (./build/lib/todo-man/todo-man.py:62)
+- [ ] Make an argument for whether the output file is markdown or github-flavored markdown (./build/lib/todo-man/todo-man.py:63)
+- [ ] Import logging and use it (./build/lib/todo-man/todo-man.py:75)
