@@ -1,7 +1,11 @@
+'''todo-man.py
+Extracts 'TODOs' from source code and renders them in markdown
+
+Author: Rylan Santinon
+'''
 import argparse
 import os
 #TODO: put in docstring
-
 
 class Todo:
   def __init__(self, filepath, line_number, text):
@@ -27,6 +31,7 @@ def get_todos(file_list):
       i = 0
       for line in f.readlines():
 	i += 1
+	#TODO: Use a regular expression instead
 	if 'TODO:' in line:
 	  if len(line.strip().split('TODO')[0]) <= 2:
 	    todo = line.split('TODO:')[1].strip()
@@ -50,6 +55,7 @@ def main():
   parser.add_argument('out', metavar='O', nargs='?', default='TODO.md', help='The markdown file to write TODOs to')
   parser.add_argument('file_type', metavar='T', nargs=1, help='The file suffix of source code files (ex: py, js, java)')
   #TODO: Make an argument '-f' to force the output file to get overwritten
+  #TODO: Make an argument for whether the output file is markdown or github-flavored markdown
   args = parser.parse_args()
 
   output_md = args.out
