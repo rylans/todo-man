@@ -2,14 +2,15 @@ import argparse
 import os
 #TODO: put in docstring
 
+
 class Todo:
   def __init__(self, filepath, line_number, text):
     self.filepath = filepath
-    self.line_number = line_number
+    self.line_number = str(line_number)
     self.text = text
 
   def __repr__(self):
-    return '[' + ','.join([self.filepath, str(self.line_number), self.text]) + ']'
+    return '[' + ','.join([self.filepath, self.line_number, self.text]) + ']'
 
 def get_files(suffix):
   file_list = []
@@ -32,20 +33,32 @@ def get_todos(file_list):
 	    todo_list.append(Todo(file_, i, todo))
   return todo_list
 
+def write_todos(todo_list, output_file):
+  gfm_prefix = "- [ ] "
+
+  #TODO: Sort todo_list by file and line number
+  with open(output_file, 'w') as f:
+    f.write("#TODO List\n")
+    
+    for todo in todo_list:
+      f.write(gfm_prefix)
+      f.write(todo.text + " ")
+      f.write( "(" + todo.filepath + ":" + todo.line_number + ")\n")
+
 def main():
   parser = argparse.ArgumentParser(description='Process.')
   parser.add_argument('out', metavar='O', nargs='?', default='TODO.md', help='The markdown file to write TODOs to')
   parser.add_argument('file_type', metavar='T', nargs=1, help='The file suffix of source code files (ex: py, js, java)')
   #TODO: Make an argument '-f' to force the output file to get overwritten
   args = parser.parse_args()
-  print args.out
-  print args.file_type[0]
 
   output_md = args.out
   file_suffix = args.file_type[0]
 
   files = get_files(file_suffix)
-  print get_todos(files)
+  todos = get_todos(files)
+
+  write_todos(todos, output_md)
 
 if __name__ == '__main__':
   #TODO: Import logging and use it
