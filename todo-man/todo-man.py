@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''todo-man.py
 Extracts 'TODOs' from source code and renders them in markdown
 
