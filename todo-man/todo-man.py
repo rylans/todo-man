@@ -7,6 +7,7 @@ Author: Rylan Santinon
 import argparse
 import os
 import re
+import textwrap
 #TODO: Level 0 todo
 
 class Todo: #TODO: subclass object explicitly?
@@ -105,9 +106,21 @@ def write_todos(todo_list, output_file, is_md):
 	wrote[key] = key
 
 def main():
-  parser = argparse.ArgumentParser(description='Process.')
-  parser.add_argument('out', metavar='O', nargs='?', default='TODO.md', help='The markdown file to write TODOs to')
+  desc = '''Get TODO comments from source code file and put them into a Markdown file
+
+  Examples:
+    To find all TODOs in Javascript files and put them into TODO.md:
+      $ todo-man.py js
+
+    To find all TODOs in Python files and output them using Markdown into TODO.md:
+      $ todo-man.py --md TODO.md py
+
+    To search Ruby files for TODOs and output into 'output.md':
+      $ todo-man.py output.md rb
+  '''
+  parser = argparse.ArgumentParser(description=textwrap.dedent(desc), formatter_class=argparse.RawDescriptionHelpFormatter)
   parser.add_argument('file_type', metavar='T', nargs=1, help='The file suffix of source code files (ex: py, js, java)')
+  parser.add_argument('out', metavar='O', nargs='?', default='TODO.md', help='The markdown file to write TODOs to')
   parser.add_argument('--md', dest='md_format', metavar='M', nargs='?', const=True, default=False, help='Use markdown (Default is Github-flavored markdown)')
   #TODO: Make an argument '-f' to force the output file to get overwritten
   args = parser.parse_args()
