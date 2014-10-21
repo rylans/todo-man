@@ -56,7 +56,6 @@ def get_files(suffix):
   for root, dirs, files in os.walk('.'):
     for f in files:
       if f.endswith(suffix):
-	fullpath = os.path.join(root, f)
 	file_list.append(os.path.join(root, f))
 
   ignored_files = []
@@ -81,9 +80,15 @@ def get_todos(file_list):
 	    todo_list.append(Todo(file_, i, todo))
   return todo_list
 
-def write_todos(todo_list, output_file):
+def write_todos(todo_list, output_file, is_md):
   wrote = {}
   gfm_prefix = "- [ ] "
+  md_prefix = "* "
+
+  if is_md:
+    prefix = md_prefix
+  else:
+    prefix = gfm_prefix
 
   #TODO: Sort todo_list by file and line number
   with open(output_file, 'w') as f:
@@ -92,7 +97,7 @@ def write_todos(todo_list, output_file):
     for todo in todo_list:
       key = todo.text + todo.line_number
       if not wrote.get(key):
-	f.write(gfm_prefix)
+	f.write(prefix)
 	f.write(todo.text + " ")
 	f.write( "(" + todo.filepath + ":" + todo.line_number + ")\n")
 	wrote[key] = key
@@ -101,17 +106,19 @@ def main():
   parser = argparse.ArgumentParser(description='Process.')
   parser.add_argument('out', metavar='O', nargs='?', default='TODO.md', help='The markdown file to write TODOs to')
   parser.add_argument('file_type', metavar='T', nargs=1, help='The file suffix of source code files (ex: py, js, java)')
+  parser.add_argument('--md', dest='md_format', metavar='M', nargs='?', const=True, default=False, help='Use markdown (Default is Github-flavored markdown)')
   #TODO: Make an argument '-f' to force the output file to get overwritten
   #TODO: Make an argument for whether the output file is markdown or github-flavored markdown
   args = parser.parse_args()
 
   output_md = args.out
   file_suffix = args.file_type[0]
+  md = args.md_format
 
   files = get_files(file_suffix)
   todos = get_todos(files)
 
-  write_todos(todos, output_md)
+  write_todos(todos, output_md, md)
 
 if __name__ == '__main__':
   #TODO: Import logging and use it
