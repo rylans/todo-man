@@ -17,13 +17,55 @@ class Todo:
   def __repr__(self):
     return '[' + ','.join([self.filepath, self.line_number, self.text]) + ']'
 
+def in_insensitive(item, item_list):
+  """Returns true if item is in item_list by comparing without case
+
+  >>> in_insensitive('a', ['B','A','D'])
+  True
+
+  >>> in_insensitive('a', ['B','D'])
+  False
+
+  >>> in_insensitive('foo', 'afOobar')
+  True
+
+  >>> in_insensitive('foo', 'afXobar')
+  False
+  """
+  if type(item_list) == type(''):
+    return item.lower() in item_list.lower()
+  for list_item in item_list:
+    if cmp_insensitive(list_item, item):
+      return True
+  return False
+
+def cmp_insensitive(str1, str2):
+  """Returns true if str1 and str2 are equal by comparing without case
+
+  >>> cmp_insensitive('AbC', 'aBc')
+  True
+
+  >>> cmp_insensitive('AdC', 'aBc')
+  False
+  """
+  return str1.lower() == str2.lower()
+
 def get_files(suffix):
+  ignores = ['build', 'bin', 'dst', 'dest', 'dist']
   file_list = []
   for root, dirs, files in os.walk('.'):
     for f in files:
       if f.endswith(suffix):
+	fullpath = os.path.join(root, f)
 	file_list.append(os.path.join(root, f))
-  return file_list
+
+  ignored_files = []
+  for z in file_list:
+    for ignore in ignores:
+      if in_insensitive(ignore, z):
+	ignored_files.append(z)
+
+  return [file for file in file_list if file not in ignored_files]
 
 def get_todos(file_list):
   todo_list = []
@@ -73,4 +115,6 @@ def main():
 
 if __name__ == '__main__':
   #TODO: Import logging and use it
+  import doctest
+  doctest.testmod()
   main()
