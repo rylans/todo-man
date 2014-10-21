@@ -6,9 +6,10 @@ Author: Rylan Santinon
 '''
 import argparse
 import os
-#TODO: put in docstring
+import re
+#TODO: Level 0 todo
 
-class Todo:
+class Todo: #TODO: subclass object explicitly?
   def __init__(self, filepath, line_number, text):
     self.filepath = filepath
     self.line_number = str(line_number)
@@ -73,11 +74,13 @@ def get_todos(file_list):
       i = 0
       for line in f.readlines():
 	i += 1
-	#TODO: Use a regular expression instead
-	if 'TODO:' in line:
-	  if len(line.strip().split('TODO')[0]) <= 2:
-	    todo = line.split('TODO:')[1].strip()
-	    todo_list.append(Todo(file_, i, todo))
+	regexp_search = re.search('TODO:', line, re.IGNORECASE)
+	if regexp_search:
+	  span = regexp_search.span()
+	  before = line[:span[0]]
+	  after = line[span[1]:].strip()
+	  if len(before.strip()) <= 2:
+	    todo_list.append(Todo(file_, i, after))
   return todo_list
 
 def write_todos(todo_list, output_file, is_md):
@@ -93,7 +96,6 @@ def write_todos(todo_list, output_file, is_md):
   #TODO: Sort todo_list by file and line number
   with open(output_file, 'w') as f:
     f.write("#TODO List\n")
-    
     for todo in todo_list:
       key = todo.text + todo.line_number
       if not wrote.get(key):
@@ -108,7 +110,6 @@ def main():
   parser.add_argument('file_type', metavar='T', nargs=1, help='The file suffix of source code files (ex: py, js, java)')
   parser.add_argument('--md', dest='md_format', metavar='M', nargs='?', const=True, default=False, help='Use markdown (Default is Github-flavored markdown)')
   #TODO: Make an argument '-f' to force the output file to get overwritten
-  #TODO: Make an argument for whether the output file is markdown or github-flavored markdown
   args = parser.parse_args()
 
   output_md = args.out
