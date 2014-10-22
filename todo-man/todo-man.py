@@ -74,54 +74,80 @@ class SourceCodeLine:
     """
     return "SourceCodeLine(line=%r, line_number=%r, filename=%r)" % (self.line, self.line_number, self.filename)
 
-def in_insensitive(item, item_list):
-  """Returns true if item is in item_list by comparing without case
-
-  >>> in_insensitive('a', ['B','A','D'])
-  True
-
-  >>> in_insensitive('a', ['B','D'])
-  False
-
-  >>> in_insensitive('foo', 'afOobar')
-  True
-
-  >>> in_insensitive('foo', 'afXobar')
-  False
-  """
-  if type(item_list) == type(''):
-    return item.lower() in item_list.lower()
-  for list_item in item_list:
-    if cmp_insensitive(list_item, item):
-      return True
-  return False
-
-def cmp_insensitive(str1, str2):
-  """Returns true if str1 and str2 are equal by comparing without case
-
-  >>> cmp_insensitive('AbC', 'aBc')
-  True
-
-  >>> cmp_insensitive('AdC', 'aBc')
-  False
-  """
-  return str1.lower() == str2.lower()
-
-def get_files(suffix):
+class FileHandler:
   ignores = ['build', 'bin', 'dst', 'dest', 'dist', 'node_modules','bower_components']
-  file_list = []
-  for root, dirs, files in os.walk('.'):
-    for f in files:
-      if f.endswith(suffix):
-	file_list.append(os.path.join(root, f))
 
-  ignored_files = []
-  for z in file_list:
-    for ignore in ignores:
-      if in_insensitive(ignore, z):
-	ignored_files.append(z)
+  def __init__(self):
+    pass
 
-  return [file for file in file_list if file not in ignored_files]
+  def get_files(self, file_suffix):
+    file_list = []
+    for root, dirs, files in os.walk('.'):
+      for f in files:
+	if f.endswith(file_suffix):
+	  file_list.append(os.path.join(root, f))
+
+    ignored_files = []
+    for z in file_list:
+      for ignore in FileHandler.ignores:
+	if self.in_insensitive(ignore, z):
+	  ignored_files.append(z)
+
+    return [file for file in file_list if file not in ignored_files]
+
+  def in_insensitive(self, item, item_list):
+    """Returns true if item is in item_list by comparing without case
+
+    >>> FileHandler().in_insensitive('a', ['B','A','D'])
+    True
+
+    >>> FileHandler().in_insensitive('a', ['B','D'])
+    False
+
+    >>> FileHandler().in_insensitive('foo', 'afOobar')
+    True
+
+    >>> FileHandler().in_insensitive('foo', 'afXobar')
+    False
+    """
+    if type(item_list) == type(''):
+      return item.lower() in item_list.lower()
+    for list_item in item_list:
+      if self.cmp_insensitive(list_item, item):
+	return True
+    return False
+
+  def cmp_insensitive(self, str1, str2):
+    """Returns true if str1 and str2 are equal by comparing without case
+
+    >>> FileHandler().cmp_insensitive('AbC', 'aBc')
+    True
+
+    >>> FileHandler().cmp_insensitive('AdC', 'aBc')
+    False
+    """
+    return str1.lower() == str2.lower()
+
+  def write_todos(self, todo_list, output_file, is_md):
+    wrote = {}
+    gfm_prefix = "- [ ] "
+    md_prefix = "* "
+
+    if is_md:
+      prefix = md_prefix
+    else:
+      prefix = gfm_prefix
+
+    #TODO: Sort todo_list by file and line number
+    with open(output_file, 'w') as f:
+      f.write("#TODO List\n")
+      for todo in todo_list:
+	key = todo.text + todo.line_number
+	if not wrote.get(key):
+	  f.write(prefix)
+	  f.write(todo.text + " ")
+	  f.write( "(" + todo.filepath + ":" + todo.line_number + ")\n")
+	  wrote[key] = key
 
 def get_todos(file_list):
   """Get TODOs from a list of input files"""
@@ -136,26 +162,6 @@ def get_todos(file_list):
 	  todo_list.append(sc_line.get_todo())
   return todo_list
 
-def write_todos(todo_list, output_file, is_md):
-  wrote = {}
-  gfm_prefix = "- [ ] "
-  md_prefix = "* "
-
-  if is_md:
-    prefix = md_prefix
-  else:
-    prefix = gfm_prefix
-
-  #TODO: Sort todo_list by file and line number
-  with open(output_file, 'w') as f:
-    f.write("#TODO List\n")
-    for todo in todo_list:
-      key = todo.text + todo.line_number
-      if not wrote.get(key):
-	f.write(prefix)
-	f.write(todo.text + " ")
-	f.write( "(" + todo.filepath + ":" + todo.line_number + ")\n")
-	wrote[key] = key
 
 #ToDo: USED FOR TESTING
 def todoman(output_md, file_suffix, md):
@@ -176,9 +182,10 @@ def todoman(output_md, file_suffix, md):
   ... except OSError:
   ...	pass
   '''
-  files = get_files(file_suffix)
+  handler = FileHandler()
+  files = handler.get_files(file_suffix)
   todos = get_todos(files)
-  write_todos(todos, output_md, md)
+  handler.write_todos(todos, output_md, md)
 
 def main():
   desc = '''Get TODO comments from source code file and put them into a Markdown file
