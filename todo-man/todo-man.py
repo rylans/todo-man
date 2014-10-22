@@ -128,11 +128,10 @@ def get_todos(file_list):
   todo_list = []
   for file_ in file_list:
     with open(file_, 'r') as f:
-      i = 0
+      line_num = 0
       for line in f.readlines():
-	i += 1
-
-	sc_line = SourceCodeLine(line, i, file_)
+	line_num += 1
+	sc_line = SourceCodeLine(line, line_num, file_)
 	if sc_line.has_todo():
 	  todo_list.append(sc_line.get_todo())
   return todo_list
