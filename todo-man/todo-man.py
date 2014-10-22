@@ -105,6 +105,29 @@ def write_todos(todo_list, output_file, is_md):
 	f.write( "(" + todo.filepath + ":" + todo.line_number + ")\n")
 	wrote[key] = key
 
+#ToDo: USED FOR TESTING
+def todoman(output_md, file_suffix, md):
+  '''Get files, get ToDos in files then write them out
+
+  >>> todoman('__test.md', 'py', False)
+  >>> with open('__test.md') as f:
+  ...	any(['[ ] USED FOR TESTING' in line for line in f.readlines()])
+  True
+
+  >>> todoman('__test.md', 'py', True)
+  >>> with open('__test.md') as f:
+  ...	any(['* USED FOR TESTING' in line for line in f.readlines()])
+  True
+
+  >>> try:
+  ...	os.remove('__test.md')
+  ... except OSError:
+  ...	pass
+  '''
+  files = get_files(file_suffix)
+  todos = get_todos(files)
+  write_todos(todos, output_md, md)
+
 def main():
   desc = '''Get TODO comments from source code file and put them into a Markdown file
 
@@ -119,8 +142,8 @@ def main():
       $ todo-man.py output.md rb
   '''
   parser = argparse.ArgumentParser(description=textwrap.dedent(desc), formatter_class=argparse.RawDescriptionHelpFormatter)
-  parser.add_argument('file_type', metavar='T', nargs=1, help='The file suffix of source code files (ex: py, js, java)')
   parser.add_argument('out', metavar='O', nargs='?', default='TODO.md', help='The markdown file to write TODOs to')
+  parser.add_argument('file_type', metavar='T', nargs=1, help='The file suffix of source code files (ex: py, js, java)')
   parser.add_argument('--md', dest='md_format', metavar='M', nargs='?', const=True, default=False, help='Use markdown (Default is Github-flavored markdown)')
   #TODO: Make an argument '-f' to force the output file to get overwritten
   args = parser.parse_args()
@@ -129,10 +152,7 @@ def main():
   file_suffix = args.file_type[0]
   md = args.md_format
 
-  files = get_files(file_suffix)
-  todos = get_todos(files)
-
-  write_todos(todos, output_md, md)
+  todoman(output_md, file_suffix, md)
 
 if __name__ == '__main__':
   #TODO: Import logging and use it
