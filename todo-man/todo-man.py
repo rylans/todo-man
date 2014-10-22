@@ -10,14 +10,7 @@ import re
 import textwrap
 #TODO: Level 0 todo
 
-class Todo: #TODO: subclass object explicitly?
-  def __init__(self, filepath, line_number, text):
-    self.filepath = filepath
-    self.line_number = str(line_number)
-    self.text = text
-
-  def __repr__(self):
-    return '[' + ','.join([self.filepath, self.line_number, self.text]) + ']'
+from todo import Todo
 
 class SourceCodeLine:
   '''A line of code in a file'''
