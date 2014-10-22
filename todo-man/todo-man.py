@@ -53,7 +53,7 @@ def cmp_insensitive(str1, str2):
   return str1.lower() == str2.lower()
 
 def get_files(suffix):
-  ignores = ['build', 'bin', 'dst', 'dest', 'dist']
+  ignores = ['build', 'bin', 'dst', 'dest', 'dist', 'node_modules','bower_components']
   file_list = []
   for root, dirs, files in os.walk('.'):
     for f in files:
