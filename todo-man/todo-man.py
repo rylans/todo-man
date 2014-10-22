@@ -148,11 +148,8 @@ def main():
   #TODO: Make an argument '-f' to force the output file to get overwritten
   args = parser.parse_args()
 
-  output_md = args.out
-  file_suffix = args.file_type[0]
-  md = args.md_format
-
-  todoman(output_md, file_suffix, md)
+  context = (args.out, args.file_type[0], args.md_format)
+  todoman(*context)
 
 if __name__ == '__main__':
   #TODO: Import logging and use it
