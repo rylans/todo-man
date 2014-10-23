@@ -67,7 +67,6 @@ def main():
   parser.add_argument('out', metavar='O', nargs='?', default='TODO.md', help='The markdown file to write TODOs to')
   parser.add_argument('file_type', metavar='T', nargs=1, help='The file suffix of source code files (ex: py, js, java)')
   parser.add_argument('--md', dest='md_format', metavar='M', nargs='?', const=True, default=False, help='Use markdown (Default is Github-flavored markdown)')
-  #TODO: Make an argument '-f' to force the output file to get overwritten
   args = parser.parse_args()
 
   context = (args.out, args.file_type[0], args.md_format)
