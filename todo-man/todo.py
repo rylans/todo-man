@@ -15,6 +15,10 @@ class Todo:
 
     >>> print Todo('abc', 34, 'bar')
     Todo(filepath='abc', line_number='34', text='bar')
+
+    >>> todo = Todo('bar', 49, 'baz')
+    >>> repr(todo) == repr(eval(repr(todo)))
+    True
     """
     return "Todo(filepath=%r, line_number=%r, text=%r)" % \
      (self.filepath, self.line_number, self.text)
