@@ -40,6 +40,12 @@ def todoman(output_md, file_suffix, md):
   ...	any(['* USED FOR TESTING' in line for line in f.readlines()])
   True
 
+  >>> todoman('__test.md', 'js', False)
+  >>> with open('__test.md') as f:
+  ...	ln = len(f.readlines())
+  >>> ln == 1
+  True
+
   >>> try:
   ...	os.remove('__test.md')
   ... except OSError:
